@@ -10,27 +10,130 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-const employees = [];
+const teamMembers = [];
+function init() {
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
+    function makeManager() {
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "What is your managers name?",
+                name: "name",
+            },
+            {
+                type: "input",
+                message: "What is your managers Id number?",
+                name: "id",
+            },
+            {
+                type: "input",
+                message: "What is your managers email?",
+                name: "email",
+            },
+            {
+                type: "input",
+                message: "What is your managers Office Number?",
+                name: "officeNumber",
+            }
+        ]).then(answer => {
+            const manager = new Manager(answer.name, answer.id, answer.email, answer.role, answer.officeNumber)
+            teamMembers.push(manager);
+            generateTeam();
+        })
+    }
+
+    function createEngineer() {
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "What is your engineers name?",
+                name: "name",
+            },
+            {
+                type: "input",
+                message: "What is your engineers Id number?",
+                name: "id",
+            },
+            {
+                type: "input",
+                message: "What is your engineers email?",
+                name: "email",
+            },
+            {
+                type: "input",
+                message: "What is your engineers Github Username?",
+                name: "github",
+            }
+        ]).then(answer => {
+            const engineer = new Engineer(answer.name, answer.id, answer.email, answer.github)
+            teamMembers.push(engineer);
+            generateTeam()
+        })
+    }
+
+    function createIntern() {
+        inquirer.prompt([
+            {
+                type: "input",
+                message: "What is your interns name?",
+                name: "name",
+            },
+            {
+                type: "input",
+                message: "What is your interns Id number?",
+                name: "id",
+            },
+            {
+                type: "input",
+                message: "What is your interns email?",
+                name: "email",
+            },
+            {
+                type: "input",
+                message: "What school did your intern attend?",
+                name: "school",
+            }
+        ]).then(answer => {
+            const intern = new Intern(answer.name, answer.id, answer.email, answer.school)
+            teamMembers.push(intern);
+            generateTeam()
+        })
+    }
 
 
+    function generateTeam() {
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "teamChoice",
+                message: "Do you want to add more team members?",
+                choices: ["Engineer", "Intern", "None"],
+            }
+        ]).then(answer => {
+            switch (answer.teamChoice) {
+                case "Engineer":
+                    createEngineer();
+                    break;
+                case "Intern":
+                    createIntern();
+                    break;
+                default:
+                    makeTeam()
+            }
+        })
+    }
 
-inquirer.prompt([
-    {
-        type: "input",
-        name: "managersName",
-        message: "The managers name"
-    },
-    {
-        type: "input",
-        name: "employeeName",
-        message: "The employees name"
-    },
-]).then(data => {
-    console.log(data)
-})
+    function makeTeam() {
 
+        fs.writeFile(outputPath, render(teamMembers), function () {
+
+        })
+    }
+
+    makeManager();
+}
+init();
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
