@@ -37,7 +37,7 @@ function init() {
                 name: "officeNumber",
             }
         ]).then(answer => {
-            const manager = new Manager(answer.name, answer.id, answer.email, answer.role, answer.officeNumber)
+            const manager = new Manager(answer.name, answer.id, answer.email, answer.officeNumber)
             teamMembers.push(manager);
             generateTeam();
         })
